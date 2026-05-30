@@ -1,99 +1,38 @@
-# AI Resume Optimization Engine (Local LLM-Based)
+# 🏦 Indian Banking Sector Quantitative Optimizer
 
-## Overview
+## Project Overview
 
-The AI Resume Optimization Engine is a lightweight, local AI-powered system designed to automate resume customization based on specific job descriptions.
+A specialized financial modeling tool that applies Modern Portfolio Theory (MPT) to the entire Indian Banking sector. This algorithm analyzes 41 major public, private, and small finance banks to construct a mathematically optimized, high-yield portfolio.
 
-This project eliminates repetitive manual editing by dynamically aligning resume content with job requirements using a locally hosted LLM.
-
-Built using:
-- Ollama (Local LLM runtime)
-- Mistral model
-- Shell scripting automation
-- Structured resume database approach
+Unlike standard index funds, this model utilizes a 0% minimum allocation floor, allowing the algorithm to ruthlessly eliminate underperforming or highly correlated assets. The result is a hyper-focused portfolio designed to strictly maximize the Sharpe Ratio.
 
 ---
 
-## Problem Statement
+## ⚙️ Technical Stack & Methodology
 
-Job applications require role-specific resume customization to align with:
-- ATS keyword filtering
-- Skill prioritization
-- Domain-specific language
-- Experience relevance
-
-Manual editing for each application is inefficient and error-prone.
+- **Data Extraction:** Up to 5 years of historical daily closing prices fetched via the `yfinance` API.
+- **Optimization Engine:** PyPortfolioOpt calculates annualized expected returns and the sample covariance matrix.
+- **Strategy:** Maximum Sharpe Ratio (Risk-Adjusted Return).
+- **Output:** Generates an Efficient Frontier scatter plot and isolates the exact percentage weights of the winning assets.
 
 ---
 
-## Solution Architecture
+## 📊 The 41-Bank Universe
 
-1. Maintain a structured master resume database
-2. Input a job description
-3. AI extracts:
-   - Required skills
-   - Domain keywords
-   - Experience signals
-4. System filters and rewrites relevant resume sections
-5. Outputs an ATS-optimized tailored resume
+Includes heavyweights like HDFC Bank, ICICI Bank, and SBI, along with mid-caps and small finance banks like Federal Bank, Karur Vysya, and Equitas.
 
-All processing runs locally — no API cost, no data exposure.
+*(Note: The algorithm successfully distilled these 41 down to the top 5 pure risk-adjusted performers).*
 
 ---
 
-## System Workflow
+## 🚀 How to Run Locally
 
-Job Description → Local LLM Processing → Resume Filtering → Keyword Alignment → Final Optimized Resume
-
----
-
-## Features
-
-- Fully local execution (privacy-first)
-- Zero API cost
-- ATS-aligned content optimization
-- Keyword relevance enhancement
-- Structured resume database logic
-- Modular and extendable architecture
-
----
-
-## Installation & Setup
-
-### 1. Install Ollama
-Download from: https://ollama.com
-
-### 2. Pull Model
-ollama pull mistral
-
-## 3. Run the Script
-chmod +x tailor.sh
-./tailor.sh
-
----
-
-## Indian Banking Sector Portfolio Optimizer
-
-This repository also includes a dedicated **41-stock Indian Banking Sector optimizer** (`banking_sector.py`).
-
-### What it does
-- Downloads up to 5 years of historical price data for 41 NSE-listed Indian banking stocks via `yfinance`
-- Handles missing data and recent IPOs gracefully (forward/back-fill)
-- Computes expected returns and the sample covariance matrix using **PyPortfolioOpt**
-- Optimizes for **Maximum Sharpe Ratio** (risk-free rate = 6%, proxy for RBI repo rate)
-- Prints the cleaned optimal weights to the terminal
-- Plots and saves the **Efficient Frontier** (`banking_frontier.png`) with the Max-Sharpe point highlighted
-- Plots and saves a **Top-5 Holdings pie chart** (`banking_top5_pie.png`)
-
-### Stocks covered
-HDFCBANK, ICICIBANK, SBIN, AXISBANK, KOTAKBANK, BANKBARODA, UNIONBANK, PNB, CANBK, INDIANB, IDBI, AUBANK, YESBANK, FEDERALBNK, INDUSINDBK, IOB, BANKINDIA, IDFCFIRSTB, MAHABANK, BANDHANBNK, UCOBANK, KARURVYSYA, CENTRALBK, RBLBANK, CUB, PSB, J&KBANK, TMB, SOUTHBANK, UJJIVANSFB, KTKBANK, EQUITASBNK, CSBBANK, DCBBANK, UTKARSHBNK, ESAFSFB, DHANBANK, CAPITALSFB, FINOPB *(and JANASFB — delisted)*
-
-### Requirements
+1. Install dependencies:
 ```
-pip install yfinance pypfopt matplotlib pandas numpy
+pip install yfinance PyPortfolioOpt matplotlib pandas
 ```
 
-### Run
+2. Run the script:
 ```
-python3 banking_sector.py
+python banking_sector.py
 ```
