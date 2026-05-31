@@ -128,16 +128,19 @@ def plot_frontier(prices):
     ann.set_path_effects([pe.withStroke(linewidth=3, foreground="white")])
 
     # --- portfolio weights legend box ---
-    header = "Max Sharpe Portfolio"
-    divider = "─" * 22
-    rows = "\n".join(f"  {t:<12} {w*100:>5.1f}%" for t, w in top_weights)
-    weight_text = f"{header}\n{divider}\n{rows}\n{divider}\n  Sharpe  {perf[2]:.2f}   Vol  {perf[1]*100:.1f}%"
+    header = "  Max Sharpe Portfolio  "
+    divider = "─" * 26
+    rows = "\n".join(f"  {t:<13}  {w*100:>5.1f}%" for t, w in top_weights)
+    weight_text = (
+        f"{header}\n{divider}\n{rows}\n{divider}\n"
+        f"  Sharpe: {perf[2]:.2f}     Vol: {perf[1]*100:.1f}%"
+    )
     ax.text(
         0.015, 0.97, weight_text,
         transform=ax.transAxes,
-        fontsize=8.5, family="monospace",
+        fontsize=11, family="monospace", fontweight="bold",
         verticalalignment="top", color="#1e293b",
-        bbox=dict(boxstyle="round,pad=0.6", fc="white", ec="#cbd5e1", lw=1.2, alpha=0.93),
+        bbox=dict(boxstyle="round,pad=0.8", fc="white", ec="#94a3b8", lw=1.5, alpha=0.95),
         zorder=7,
     )
 
