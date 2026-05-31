@@ -75,11 +75,11 @@ def plot_frontier(prices):
     for _, v, r in assets:
         ax.plot(v, r, "o", color="#64748b", ms=4, zorder=3, alpha=0.9)
 
-    # labels placed with a fixed offset so leader lines are always visible
+    # labels placed with a generous offset so leader lines are long and visible
     texts = []
     for label_str, v, r in assets:
         t = ax.text(
-            v, r + 0.04, label_str,
+            v, r + 0.10, label_str,
             fontsize=8, fontweight="bold", color="#1e293b", zorder=5,
             bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none", alpha=0.8),
         )
@@ -103,7 +103,7 @@ def plot_frontier(prices):
     for t, (_, v_orig, r_orig) in zip(texts, assets):
         lx, ly = t.get_position()
         ax.plot([lx, v_orig], [ly, r_orig],
-                color="#94a3b8", lw=0.7, zorder=2, alpha=0.9, solid_capstyle="round")
+                color="#475569", lw=1.2, zorder=2, alpha=0.85, solid_capstyle="round")
 
     # --- max sharpe star ---
     ef_star = EfficientFrontier(mu, S, weight_bounds=(0.0, 1.0))
