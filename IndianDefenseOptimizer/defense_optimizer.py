@@ -71,13 +71,17 @@ def plot_frontier(prices):
     ax.set_xlim(min(all_v) - x_range * 0.08, max(all_v) + x_range * 0.55)
     ax.set_ylim(min(all_r) - y_range * 0.30, max(all_r) + y_range * 0.25)
 
-    # --- ticker name labels with a subtle white halo for legibility ---
+    # small anchor dots at the actual data point locations
+    for _, v, r in assets:
+        ax.plot(v, r, "o", color="#64748b", ms=4, zorder=3, alpha=0.9)
+
+    # labels placed with a fixed offset so leader lines are always visible
     texts = []
     for label_str, v, r in assets:
         t = ax.text(
-            v, r, label_str,
-            fontsize=8, fontweight="bold", color="#1e293b", zorder=4,
-            bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none", alpha=0.75),
+            v, r + 0.04, label_str,
+            fontsize=8, fontweight="bold", color="#1e293b", zorder=5,
+            bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none", alpha=0.8),
         )
         texts.append(t)
 
@@ -85,13 +89,21 @@ def plot_frontier(prices):
     adjust_text(
         texts,
         ax=ax,
-        arrowprops=dict(arrowstyle="-", color="#94a3b8", lw=0.6),
         expand_text=(1.3, 1.3),
         expand_points=(2.0, 2.0),
         force_text=(0.6, 0.8),
         force_points=(0.5, 0.7),
         lim=500,
     )
+
+    # flush layout so get_position() returns the final displaced coordinates
+    fig.canvas.draw()
+
+    # draw leader lines from each label's final resting position to its dot
+    for t, (_, v_orig, r_orig) in zip(texts, assets):
+        lx, ly = t.get_position()
+        ax.plot([lx, v_orig], [ly, r_orig],
+                color="#94a3b8", lw=0.7, zorder=2, alpha=0.9, solid_capstyle="round")
 
     # --- max sharpe star ---
     ef_star = EfficientFrontier(mu, S, weight_bounds=(0.0, 1.0))
