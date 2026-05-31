@@ -40,7 +40,7 @@ def plot_frontier(prices):
     S = risk_models.sample_cov(prices)
 
     plt.style.use("default")
-    fig, ax = plt.subplots(figsize=(16, 10), facecolor="white")
+    fig, ax = plt.subplots(figsize=(18, 11), facecolor="white")
     ax.set_facecolor("#f8f9fa")
 
     # --- efficient frontier curve ---
@@ -51,8 +51,8 @@ def plot_frontier(prices):
         line.set_color("#2563eb")
         line.set_linewidth(2.5)
 
-    # --- ticker name labels (no dots) ---
-    texts = []
+    # --- collect asset positions first so we can set axis limits ---
+    assets = []
     for ticker in prices.columns:
         col = prices[ticker].dropna()
         if len(col) < 30:
@@ -61,16 +61,36 @@ def plot_frontier(prices):
         v = np.sqrt(S.loc[ticker, ticker]) if ticker in S.columns else np.nan
         if np.isnan(r) or np.isnan(v):
             continue
-        label_str = ticker.replace(".NS", "")
-        t = ax.text(v, r, label_str, fontsize=8, fontweight="bold",
-                    color="#1e293b", zorder=4)
+        assets.append((ticker.replace(".NS", ""), v, r))
+
+    all_v = [a[1] for a in assets]
+    all_r = [a[2] for a in assets]
+    x_range = max(all_v) - min(all_v)
+    y_range = max(all_r) - min(all_r)
+    # generous padding so adjust_text has room to spread labels inside the plot
+    ax.set_xlim(min(all_v) - x_range * 0.08, max(all_v) + x_range * 0.55)
+    ax.set_ylim(min(all_r) - y_range * 0.30, max(all_r) + y_range * 0.25)
+
+    # --- ticker name labels with a subtle white halo for legibility ---
+    texts = []
+    for label_str, v, r in assets:
+        t = ax.text(
+            v, r, label_str,
+            fontsize=8, fontweight="bold", color="#1e293b", zorder=4,
+            bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none", alpha=0.75),
+        )
         texts.append(t)
 
+    # pass ax= so adjust_text respects the axes boundaries
     adjust_text(
         texts,
-        arrowprops=dict(arrowstyle="-", color="#94a3b8", lw=0.7),
-        expand_points=(1.5, 1.5),
-        force_points=(0.2, 0.5),
+        ax=ax,
+        arrowprops=dict(arrowstyle="-", color="#94a3b8", lw=0.6),
+        expand_text=(1.3, 1.3),
+        expand_points=(2.0, 2.0),
+        force_text=(0.6, 0.8),
+        force_points=(0.5, 0.7),
+        lim=500,
     )
 
     # --- max sharpe star ---
@@ -82,14 +102,14 @@ def plot_frontier(prices):
     ax.scatter(star_vol, star_ret, marker="*", color="#f59e0b", s=900,
                zorder=5, edgecolors="#d97706", linewidths=1.5)
 
-    label = ax.annotate(
+    ann = ax.annotate(
         "Maximum Sharpe Portfolio",
         xy=(star_vol, star_ret),
         xytext=(star_vol + 0.018, star_ret - 0.025),
         fontsize=11, fontweight="bold", color="#92400e",
         arrowprops=dict(arrowstyle="->", color="#d97706", lw=1.5),
     )
-    label.set_path_effects([pe.withStroke(linewidth=3, foreground="white")])
+    ann.set_path_effects([pe.withStroke(linewidth=3, foreground="white")])
 
     # --- styling ---
     ax.set_title("Indian Defense Sector — Efficient Frontier",
@@ -101,7 +121,6 @@ def plot_frontier(prices):
         spine.set_edgecolor("#cbd5e1")
     ax.grid(color="#e2e8f0", linestyle="--", linewidth=0.7, alpha=0.9)
 
-    plt.tight_layout()
     out = "defense_frontier.png"
     plt.savefig(out, dpi=150, bbox_inches="tight", facecolor="white")
     print(f"\nEfficient frontier saved to '{out}'")
