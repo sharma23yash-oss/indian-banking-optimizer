@@ -108,6 +108,10 @@ def plot_frontier(prices):
     # --- max sharpe star ---
     ef_star = EfficientFrontier(mu, S, weight_bounds=(0.0, 1.0))
     ef_star.max_sharpe()
+    top_weights = sorted(
+        [(t.replace(".NS", ""), w) for t, w in ef_star.clean_weights().items() if w > 1e-4],
+        key=lambda x: -x[1],
+    )
     perf = ef_star.portfolio_performance()
     star_vol, star_ret = perf[1], perf[0]
 
@@ -122,6 +126,20 @@ def plot_frontier(prices):
         arrowprops=dict(arrowstyle="->", color="#d97706", lw=1.5),
     )
     ann.set_path_effects([pe.withStroke(linewidth=3, foreground="white")])
+
+    # --- portfolio weights legend box ---
+    header = "Max Sharpe Portfolio"
+    divider = "─" * 22
+    rows = "\n".join(f"  {t:<12} {w*100:>5.1f}%" for t, w in top_weights)
+    weight_text = f"{header}\n{divider}\n{rows}\n{divider}\n  Sharpe  {perf[2]:.2f}   Vol  {perf[1]*100:.1f}%"
+    ax.text(
+        0.015, 0.97, weight_text,
+        transform=ax.transAxes,
+        fontsize=8.5, family="monospace",
+        verticalalignment="top", color="#1e293b",
+        bbox=dict(boxstyle="round,pad=0.6", fc="white", ec="#cbd5e1", lw=1.2, alpha=0.93),
+        zorder=7,
+    )
 
     # --- styling ---
     ax.set_title("Indian Defense Sector — Efficient Frontier",
